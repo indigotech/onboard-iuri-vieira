@@ -6,9 +6,7 @@
   "author": "iuri-unb <160152488@aluno.unb.br>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "start": "yarn run build && node build/server.js",
-    "dev": "ts-node ./src/server.ts"
+    "start": "ts-node ./src/server.ts"
   },
   "dependencies": {
     "apollo-server": "^3.3.0",
