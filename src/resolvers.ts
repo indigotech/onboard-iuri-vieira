@@ -1,5 +1,6 @@
 import { User } from "./entity/User";
 import { getConnection } from "typeorm";
+const bcrypt = require("bcrypt");
 
 const resolvers = {
   Query: {
@@ -18,6 +19,8 @@ const resolvers = {
 
         if (password.length > 6) {
           var regExpNum = /\d/g;
+
+          // regular expression for find a letter in the string
           var regExpLet = /[a-zA-Z]/g;
 
           if (regExpNum.test(password) && regExpLet.test(password)) {
@@ -39,7 +42,7 @@ const resolvers = {
         console.log(
           "Erro ao tentar cadastrar o usuário, tente novamente mais tarde!"
         );
-        return error;
+        console.log(error);
       }
     },
   },
