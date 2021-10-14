@@ -1,8 +1,28 @@
+import { nanoid } from "nanoid";
+
 const { ApolloServer, gql } = require("apollo-server");
 
 const typeDefs = gql`
   type Query {
-    hello: String
+    hello: String!
+  }
+
+  input UserInput {
+    name: String!
+    email: String!
+    password: String!
+    birthDate: String!
+  }
+
+  type User {
+    id: String
+    name: String
+    email: String
+    birthDate: String
+  }
+
+  type Mutation {
+    createUser(data: UserInput!): User
   }
 `;
 
@@ -10,6 +30,16 @@ const resolvers = {
   Query: {
     hello: () => {
       return "Hello world!";
+    },
+  },
+  Mutation: {
+    createUser: (
+      _,
+      { data: args }: { data: { name; email; password; birthDate; id } }
+    ) => {
+      const id = nanoid(5);
+      args.id = id;
+      return args;
     },
   },
 };
