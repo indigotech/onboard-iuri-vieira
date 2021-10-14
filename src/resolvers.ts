@@ -1,5 +1,6 @@
 import { User } from "./entity/User";
 import { getConnection } from "typeorm";
+const bcrypt = require("bcrypt");
 
 const resolvers = {
   Query: {
@@ -17,11 +18,15 @@ const resolvers = {
         user.birthDate = birthDate;
 
         if (password.length > 6) {
-          var regExpNum = /\d/g;
-          var regExpLet = /[a-zA-Z]/g;
+          var searchForNumberRegExp = /\d/g;
+          var searchForLetterRegExp = /[a-zA-Z]/g;
 
-          if (regExpNum.test(password) && regExpLet.test(password)) {
-            user.password = password;
+          if (
+            searchForNumberRegExp.test(password) &&
+            searchForLetterRegExp.test(password)
+          ) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
           } else {
             console.log(
               "Senha inválida! A senha precisa ter ao menos uma letra e um numero"
@@ -39,7 +44,7 @@ const resolvers = {
         console.log(
           "Erro ao tentar cadastrar o usuário, tente novamente mais tarde!"
         );
-        return error;
+        console.log(error);
       }
     },
   },
