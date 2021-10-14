@@ -38,9 +38,6 @@ const resolvers = {
         user.birthDate = birthDate;
         await getConnection().manager.save(user);
 
-        console.log("Cadastrado um novo usuário com o id: " + user.id);
-
-        // const user = { firstName, lastName, age };
         return user;
       } catch (error) {
         console.log(
