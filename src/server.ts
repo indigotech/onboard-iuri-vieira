@@ -7,21 +7,22 @@ const typeDefs = gql`
     hello: String!
   }
 
-  type UserInput {
-    id: String!
+  input UserInput {
     name: String!
     email: String!
     password: String!
     birthDate: String!
   }
 
+  type User {
+    id: String
+    name: String
+    email: String
+    birthDate: String
+  }
+
   type Mutation {
-    createUser(
-      name: String!
-      email: String!
-      password: String!
-      birthDate: String!
-    ): UserInput
+    createUser(data: UserInput!): User
   }
 `;
 
@@ -32,10 +33,13 @@ const resolvers = {
     },
   },
   Mutation: {
-    createUser: (_: string, { name, email, password, birthDate }) => {
+    createUser: (
+      _,
+      { data: args }: { data: { name; email; password; birthDate; id } }
+    ) => {
       const id = nanoid(5);
-      const user = { name, email, password, birthDate, id };
-      return user;
+      args.id = id;
+      return args;
     },
   },
 };
