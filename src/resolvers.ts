@@ -13,8 +13,28 @@ const resolvers = {
       try {
         const user = new User();
         user.name = name;
+
         user.email = email;
-        user.password = password;
+        if (password.toString().length > 6) {
+          var regExpNum = /\d/g;
+          var regExpLet = /[a-zA-Z]/g;
+
+          if (
+            regExpNum.test(password.toString()) &&
+            regExpLet.test(password.toString())
+          ) {
+            user.password = password;
+          } else {
+            console.log(
+              "Senha inválida! A senha precisa ter ao menos uma letra e um numero"
+            );
+          }
+        } else {
+          console.log(
+            "Senha inválida! A senha precisa ter ao menos 7 caracteres"
+          );
+        }
+
         user.birthDate = birthDate;
         await getConnection().manager.save(user);
 
