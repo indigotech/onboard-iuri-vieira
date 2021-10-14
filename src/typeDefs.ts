@@ -11,7 +11,7 @@ const typeDefs = gql`
       email: String!
       password: String!
       birthDate: String!
-    ): UserInput
+    ): User
   }
 
   type User {
