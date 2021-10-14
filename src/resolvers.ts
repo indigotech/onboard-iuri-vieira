@@ -13,16 +13,14 @@ const resolvers = {
       try {
         const user = new User();
         user.name = name;
-
         user.email = email;
-        if (password.toString().length > 6) {
+        user.birthDate = birthDate;
+
+        if (password.length > 6) {
           var regExpNum = /\d/g;
           var regExpLet = /[a-zA-Z]/g;
 
-          if (
-            regExpNum.test(password.toString()) &&
-            regExpLet.test(password.toString())
-          ) {
+          if (regExpNum.test(password) && regExpLet.test(password)) {
             user.password = password;
           } else {
             console.log(
@@ -35,9 +33,7 @@ const resolvers = {
           );
         }
 
-        user.birthDate = birthDate;
         await getConnection().manager.save(user);
-
         return user;
       } catch (error) {
         console.log(
