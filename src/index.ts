@@ -8,14 +8,13 @@ import resolvers from "./resolvers";
 
 const startServer = async () => {
   try {
+    const connection = await createConnection();
+    connection.synchronize();
+
     const server = new ApolloServer({ typeDefs, resolvers });
-
-    await createConnection();
-
-    const app = express();
-
     await server.start();
 
+    const app = express();
     server.applyMiddleware({ app });
 
     app.listen({ port: 4000 }, () =>
@@ -29,4 +28,4 @@ const startServer = async () => {
   }
 };
 
-startServer();
+export default startServer;
