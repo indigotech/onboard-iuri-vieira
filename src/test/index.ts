@@ -1,4 +1,5 @@
 import startServer from "../index";
+import { expect } from "chai";
 
 const url = `http://localhost:4000/graphql`;
 const request = require("supertest")(url);
@@ -21,6 +22,6 @@ describe("Hello query", function () {
       .set("Accept", "application/json")
       .expect(200);
 
-    console.log(response.body.data.hello);
+    expect(response.body.data.hello).to.equal("Hello world!");
   });
 });
