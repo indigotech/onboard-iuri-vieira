@@ -14,16 +14,13 @@ describe("First test", function () {
 });
 
 describe("Hello query", function () {
-  it("shoud return a Hello word string", (done) => {
-    request
+  it("shoud return a Hello word string", async () => {
+    const response = await request
       .post("/")
       .send({ query: "query { hello }" })
       .set("Accept", "application/json")
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
-        console.log(res.body.data.hello);
-        done();
-      });
+      .expect(200);
+
+    console.log(response.body.data.hello);
   });
 });
