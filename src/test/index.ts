@@ -39,6 +39,54 @@ describe("createUser mutation", function () {
     expect(clear).to.equal(0);
   });
 
+  it("should return an invalid email error", async () => {
+    request(`http://localhost:${process.env.PORT}/graphql`)
+      .post("/")
+      .set("Accept", "application/json")
+      .send({
+        query: `mutation{
+          createUser(data: {name: "Name Test", email: "test@mail.com", password: "123456teste", birthDate: "06-05-1999"}){
+            id
+            name
+            email
+            birthDate
+          }
+        }`,
+      })
+      .end((err, res) => {
+        if (err) {
+          return err;
+        }
+
+        expect(res.body.errors[0].extensions.exception.code).to.equal(400);
+        expect(res.body.errors[0].message).to.equal("Invalid email!");
+      });
+  });
+
+  it("should return an invalid password error", async () => {
+    request(`http://localhost:${process.env.PORT}/graphql`)
+      .post("/")
+      .set("Accept", "application/json")
+      .send({
+        query: `mutation{
+          createUser(data: {name: "Name Test", email: "test1@mail.com", password: "12345c", birthDate: "06-05-1999"}){
+            id
+            name
+            email
+            birthDate
+          }
+        }`,
+      })
+      .end((err, res) => {
+        if (err) {
+          return err;
+        }
+
+        expect(res.body.errors[0].extensions.exception.code).to.equal(400);
+        expect(res.body.errors[0].message).to.equal("Invalid password!");
+      });
+  });
+
   it("should insert a user", async () => {
     const response = await queryRequest(
       `http://localhost:${process.env.PORT}/graphql`,
