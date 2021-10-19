@@ -1,5 +1,6 @@
 import { User } from "./entity/User";
 import { getConnection, getRepository } from "typeorm";
+import { CustomError } from "./error";
 const bcrypt = require("bcrypt");
 
 const resolvers = {
@@ -8,54 +9,64 @@ const resolvers = {
       return "Hello world!";
     },
     getUser: async (parent, args, context, info) => {
-      try {
-        const { id } = args;
-        const user = await getRepository(User).findOne({ id });
+      const { id } = args;
+      const user = await getRepository(User).findOne({ id });
 
-        return user;
-      } catch (error) {
-        return error;
+      if (!user) {
+        throw new CustomError(404, "User not found");
       }
+
+      return user;
     },
   },
   Mutation: {
     createUser: async (_: any, args: any) => {
       const { name, email, password, birthDate } = args.data;
-      try {
-        const user = new User();
-        user.name = name;
+
+      const user = new User();
+      user.name = name;
+      user.birthDate = birthDate;
+
+      const repository = getRepository(User);
+      const searchForEmail = await repository.find({ email });
+
+      if (searchForEmail.length !== 0) {
+        throw new CustomError(
+          400,
+          "Invalid email!",
+          "This email is already in use"
+        );
+      } else {
         user.email = email;
-        user.birthDate = birthDate;
+      }
 
-        if (password.length > 6) {
-          var searchForNumberRegExp = /\d/g;
-          var searchForLetterRegExp = /[a-zA-Z]/g;
+      if (password.length > 6) {
+        var searchForNumberRegExp = /\d/g;
+        var searchForLetterRegExp = /[a-zA-Z]/g;
 
-          if (
-            searchForNumberRegExp.test(password) &&
-            searchForLetterRegExp.test(password)
-          ) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
-          } else {
-            console.log(
-              "Senha inválida! A senha precisa ter ao menos uma letra e um numero"
-            );
-          }
+        if (
+          searchForNumberRegExp.test(password) &&
+          searchForLetterRegExp.test(password)
+        ) {
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(password, salt);
         } else {
-          console.log(
-            "Senha inválida! A senha precisa ter ao menos 7 caracteres"
+          throw new CustomError(
+            400,
+            "Invalid password!",
+            "The password has to contain at least one letter and one number"
           );
         }
-
-        await getConnection().manager.save(user);
-        return user;
-      } catch (error) {
-        console.log(
-          "Erro ao tentar cadastrar o usuário, tente novamente mais tarde!"
+      } else {
+        throw new CustomError(
+          400,
+          "Invalid password!",
+          "The password has to contain at least 7 chacaracters"
         );
-        console.log(error);
       }
+
+      await getConnection().manager.save(user);
+      return user;
     },
   },
 };
