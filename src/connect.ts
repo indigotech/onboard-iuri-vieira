@@ -8,11 +8,12 @@ import resolvers from "./resolvers";
 
 const startServer = async () => {
   try {
-    const connection = await createConnection({
+    await createConnection({
       type: "postgres",
       url: process.env.DATABASE_URL,
+      entities: ["src/entity/*.ts"],
+      synchronize: true,
     });
-    connection.synchronize();
 
     const server = new ApolloServer({ typeDefs, resolvers });
     await server.start();
