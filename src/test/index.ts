@@ -1,8 +1,7 @@
 import startServer from "../connect";
 import { expect } from "chai";
 import * as dotenv from "dotenv";
-
-const request = require("supertest");
+import * as request from "supertest";
 
 before(async () => {
   dotenv.config({ path: `${__dirname}/../../test.env` });
