@@ -1,10 +1,10 @@
-import startServer from "../index";
+import startServer from "../connect";
 import { expect } from "chai";
-
-const url = `http://localhost:4000/graphql`;
-const request = require("supertest")(url);
+import * as dotenv from "dotenv";
+import * as request from "supertest";
 
 before(async () => {
+  dotenv.config({ path: `${__dirname}/../../test.env` });
   await startServer();
 });
 
