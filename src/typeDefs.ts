@@ -1,6 +1,6 @@
 const { gql } = require("apollo-server");
 
-const typeDefs = gql`
+export const typeDefs = gql`
   type Query {
     hello: String!
     getUser(id: Int!): User
@@ -26,4 +26,9 @@ const typeDefs = gql`
   }
 `;
 
-export default typeDefs;
+export interface UserInput {
+  name: string;
+  email: string;
+  password: string;
+  birthDate: string;
+}
