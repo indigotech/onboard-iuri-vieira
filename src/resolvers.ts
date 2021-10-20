@@ -9,11 +9,8 @@ const resolvers = {
     },
     getUser: async (parent, args, context, info) => {
       try {
-        const { email } = args;
-        const user = await getRepository(User)
-          .createQueryBuilder("user")
-          .where("user.email = :email", { email })
-          .getOne();
+        const { id } = args;
+        const user = await getRepository(User).findOne({ id });
 
         return user;
       } catch (error) {
