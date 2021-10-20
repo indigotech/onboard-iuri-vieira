@@ -109,7 +109,7 @@ describe("createUser mutation", function () {
           },
         },
       });
-    console.log(response.body.errors);
+
     expect(response.body.errors[0].extensions.exception.code).to.equal(400);
     expect(response.body.errors[0].message).to.equal("Invalid password!");
   });
