@@ -28,13 +28,13 @@ const resolvers = {
       user.birthDate = birthDate;
 
       const repository = getRepository(User);
-      const searchForEmail = await repository.find({ email });
+      const searchForEmail = await repository.findOne({ email });
 
-      if (searchForEmail.length !== 0) {
+      if (searchForEmail) {
         throw new CustomError(
-          400,
-          "Invalid email!",
-          "This email is already in use"
+          409,
+          "This email is already in use!",
+          "Insert a new email"
         );
       } else {
         user.email = email;
@@ -44,10 +44,10 @@ const resolvers = {
         var searchForNumberRegExp = /\d/g;
         var searchForLetterRegExp = /[a-zA-Z]/g;
 
-        if (
-          searchForNumberRegExp.test(password) &&
-          searchForLetterRegExp.test(password)
-        ) {
+        const passwordHasNumber = searchForNumberRegExp.test(password);
+        const passwordHasLetter = searchForLetterRegExp.test(password);
+
+        if (passwordHasNumber && passwordHasLetter) {
           const salt = await bcrypt.genSalt(10);
           user.password = await bcrypt.hash(password, salt);
         } else {
