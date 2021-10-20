@@ -9,17 +9,18 @@ export class CustomError extends Error {
     super(message);
     this.code = code;
     this.additionalInfo = additionalInfo;
-
-    Object.defineProperty(this, "name", { value: "CustomError" });
+    this.name = "CustomError";
   }
 }
 
 export function formatError(error: ApolloError) {
-  if (error.originalError?.name === "CustomError") {
+  const originalError = error.originalError as CustomError;
+
+  if (originalError?.name === "CustomError") {
     return {
-      code: error.code,
-      message: error.message,
-      additionalInfo: error.additionalInfo,
+      code: originalError.code,
+      message: originalError.message,
+      additionalInfo: originalError.additionalInfo,
       ...error,
     };
   } else {
