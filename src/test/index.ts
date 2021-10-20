@@ -5,6 +5,7 @@ import { User } from "../entity/User";
 import * as dotenv from "dotenv";
 import * as request from "supertest";
 import { queryRequest } from "./request-functions";
+import { UserInput } from "../typeDefs";
 
 const createUserMutation = `mutation {
   createUser(data: {name: "Name Test", email: "test@mail.com", password: "123456teste", birthDate: "06-05-1999"}){
@@ -14,6 +15,20 @@ const createUserMutation = `mutation {
     birthDate
   }
 }`;
+
+const data: UserInput = {
+  name: "Name Test",
+  email: "test@mail.com",
+  password: "123456teste",
+  birthDate: "06-05-1999",
+};
+
+const dataPasswordError: UserInput = {
+  name: "Name Test",
+  email: "test@mail.com",
+  password: "12345c",
+  birthDate: "06-05-1999",
+};
 
 before(async () => {
   dotenv.config({ path: `${__dirname}/../../test.env` });
@@ -39,52 +54,64 @@ describe("createUser mutation", function () {
     expect(clear).to.equal(0);
   });
 
-  it("should return an invalid email error", async () => {
-    request(`http://localhost:${process.env.PORT}/graphql`)
+  it("should return that the email is already in use error", async () => {
+    const responseCreateUser = await request(
+      `http://localhost:${process.env.PORT}/graphql`
+    )
       .post("/")
       .set("Accept", "application/json")
       .send({
-        query: `mutation{
-          createUser(data: {name: "Name Test", email: "test@mail.com", password: "123456teste", birthDate: "06-05-1999"}){
-            id
-            name
-            email
-            birthDate
-          }
-        }`,
+        query: createUserMutation,
+        variables: { data },
       })
-      .end((err, res) => {
-        if (err) {
-          return err;
-        }
+      .expect(200);
 
-        expect(res.body.errors[0].extensions.exception.code).to.equal(400);
-        expect(res.body.errors[0].message).to.equal("Invalid email!");
-      });
+    expect(responseCreateUser.body.data.createUser.id).to.greaterThan(0);
+    expect(responseCreateUser.body.data.createUser.name).to.equal("Name Test");
+    expect(responseCreateUser.body.data.createUser.email).to.equal(
+      "test@mail.com"
+    );
+    expect(responseCreateUser.body.data.createUser.birthDate).to.equal(
+      "06-05-1999"
+    );
+
+    const response = await request(
+      `http://localhost:${process.env.PORT}/graphql`
+    )
+      .post("/")
+      .set("Accept", "application/json")
+      .send({
+        query: createUserMutation,
+        variables: { data },
+      })
+      .expect(200);
+
+    expect(response.body.errors[0].extensions.exception.code).to.equal(409);
+    expect(response.body.errors[0].message).to.equal(
+      "This email is already in use!"
+    );
   });
 
   it("should return an invalid password error", async () => {
-    request(`http://localhost:${process.env.PORT}/graphql`)
+    const response = await request(
+      `http://localhost:${process.env.PORT}/graphql`
+    )
       .post("/")
       .set("Accept", "application/json")
       .send({
-        query: `mutation{
-          createUser(data: {name: "Name Test", email: "test1@mail.com", password: "12345c", birthDate: "06-05-1999"}){
-            id
-            name
-            email
-            birthDate
-          }
-        }`,
-      })
-      .end((err, res) => {
-        if (err) {
-          return err;
-        }
-
-        expect(res.body.errors[0].extensions.exception.code).to.equal(400);
-        expect(res.body.errors[0].message).to.equal("Invalid password!");
+        query: createUserMutation,
+        variables: {
+          data: {
+            name: "Name Test",
+            email: "test@mail.com",
+            password: "12345c",
+            birthDate: "06-05-1999",
+          },
+        },
       });
+    console.log(response.body.errors);
+    expect(response.body.errors[0].extensions.exception.code).to.equal(400);
+    expect(response.body.errors[0].message).to.equal("Invalid password!");
   });
 
   it("should insert a user", async () => {
