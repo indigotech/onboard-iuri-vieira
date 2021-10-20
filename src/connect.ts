@@ -3,7 +3,7 @@ import { createConnection } from "typeorm";
 import * as express from "express";
 import { ApolloServer } from "apollo-server-express";
 
-import typeDefs from "./typeDefs";
+import { typeDefs } from "./typeDefs";
 import resolvers from "./resolvers";
 
 const startServer = async () => {
