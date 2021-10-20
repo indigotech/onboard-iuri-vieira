@@ -25,7 +25,9 @@ before(async () => {
 
 describe("Hello query", function () {
   it("shoud return a Hello word string", async () => {
-    const response = await request
+    const response = await request(
+      `http://localhost:${process.env.PORT}/graphql`
+    )
       .post("/")
       .send({ query: "query { hello }" })
       .set("Accept", "application/json")
