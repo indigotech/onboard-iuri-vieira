@@ -86,7 +86,7 @@ describe("createUser mutation", function () {
       })
       .expect(200);
 
-    expect(response.body.errors[0].extensions.exception.code).to.equal(409);
+    expect(response.body.errors[0].code).to.equal(409);
     expect(response.body.errors[0].message).to.equal(
       "This email is already in use!"
     );
@@ -110,7 +110,7 @@ describe("createUser mutation", function () {
         },
       });
 
-    expect(response.body.errors[0].extensions.exception.code).to.equal(400);
+    expect(response.body.errors[0].code).to.equal(400);
     expect(response.body.errors[0].message).to.equal("Invalid password!");
   });
 

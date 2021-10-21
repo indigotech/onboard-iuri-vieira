@@ -5,6 +5,7 @@ import { ApolloServer } from "apollo-server-express";
 
 import { typeDefs } from "./typeDefs";
 import resolvers from "./resolvers";
+import { formatError } from "./error";
 
 const startServer = async () => {
   try {
@@ -15,7 +16,7 @@ const startServer = async () => {
       synchronize: true,
     });
 
-    const server = new ApolloServer({ typeDefs, resolvers });
+    const server = new ApolloServer({ typeDefs, resolvers, formatError });
     await server.start();
 
     const app = express();
