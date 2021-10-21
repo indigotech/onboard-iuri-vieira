@@ -1,5 +1,5 @@
 import { User } from "./entity/User";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 const bcrypt = require("bcrypt");
 
 const resolvers = {
@@ -7,10 +7,20 @@ const resolvers = {
     hello: () => {
       return "Hello world!";
     },
+    getUser: async (parent, args, context, info) => {
+      try {
+        const { id } = args;
+        const user = await getRepository(User).findOne({ id });
+
+        return user;
+      } catch (error) {
+        return error;
+      }
+    },
   },
   Mutation: {
     createUser: async (_: any, args: any) => {
-      const { name, email, password, birthDate } = args;
+      const { name, email, password, birthDate } = args.data;
       try {
         const user = new User();
         user.name = name;
