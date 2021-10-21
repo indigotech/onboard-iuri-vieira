@@ -48,10 +48,16 @@ describe("createUser mutation", function () {
     const id = response.body.data.createUser.id;
     const user = await getRepository(User).findOne({ id });
 
-    expect(response.body.data.createUser.id).to.eq(user.id);
-    expect(response.body.data.createUser.name).to.eq(user.name);
-    expect(response.body.data.createUser.birthDate).to.eq(user.birthDate);
-    expect(response.body.data.createUser.email).to.eq(user.email);
+    expect(response.body.data.createUser.name).to.eq("Name Test");
+    expect(response.body.data.createUser.birthDate).to.eq("06-05-1999");
+    expect(response.body.data.createUser.email).to.eq("test@mail.com");
+
+    expect(response.body.data.createUser).to.be.deep.eq({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate,
+    });
   });
 });
 
@@ -87,9 +93,15 @@ describe("getUser query", function () {
       }`
     );
 
-    expect(response.body.data.getUser.id).to.eq(user.id);
-    expect(response.body.data.getUser.name).to.eq(user.name);
-    expect(response.body.data.getUser.birthDate).to.eq(user.birthDate);
-    expect(response.body.data.getUser.email).to.eq(user.email);
+    expect(response.body.data.getUser.name).to.eq("Name Test");
+    expect(response.body.data.getUser.birthDate).to.eq("06-05-1999");
+    expect(response.body.data.getUser.email).to.eq("test@mail.com");
+
+    expect(response.body.data.getUser).to.be.deep.eq({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate,
+    });
   });
 });
