@@ -4,6 +4,7 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import * as dotenv from "dotenv";
 import * as request from "supertest";
+import { queryRequest } from "./request-functions";
 
 const createUserMutation = `mutation {
   createUser(data: {name: "Name Test", email: "test@mail.com", password: "123456teste", birthDate: "06-05-1999"}){
@@ -17,21 +18,14 @@ const createUserMutation = `mutation {
 before(async () => {
   dotenv.config({ path: `${__dirname}/../../test.env` });
   await startServer();
-  const db = getRepository(User);
-  await db.clear();
-  const clear = await db.count();
-  expect(clear).to.equal(0);
 });
 
 describe("Hello query", function () {
   it("shoud return a Hello word string", async () => {
-    const response = await request(
-      `http://localhost:${process.env.PORT}/graphql`
-    )
-      .post("/")
-      .send({ query: "query { hello }" })
-      .set("Accept", "application/json")
-      .expect(200);
+    const response = await queryRequest(
+      `http://localhost:${process.env.PORT}/graphql`,
+      "query { hello }"
+    );
 
     expect(response.body.data.hello).to.equal("Hello world!");
   });
@@ -46,20 +40,18 @@ describe("createUser mutation", function () {
   });
 
   it("should insert a user", async () => {
-    const response = await request(
-      `http://localhost:${process.env.PORT}/graphql`
-    )
-      .post("/")
-      .set("Accept", "application/json")
-      .send({
-        query: createUserMutation,
-      })
-      .expect(200);
+    const response = await queryRequest(
+      `http://localhost:${process.env.PORT}/graphql`,
+      createUserMutation
+    );
 
-    expect(response.body.data.createUser.id).to.greaterThan(0);
-    expect(response.body.data.createUser.name).to.equal("Name Test");
-    expect(response.body.data.createUser.email).to.equal("test@mail.com");
-    expect(response.body.data.createUser.birthDate).to.equal("06-05-1999");
+    const id = response.body.data.createUser.id;
+    const user = await getRepository(User).findOne({ id });
+
+    expect(response.body.data.createUser.id).to.eq(user.id);
+    expect(response.body.data.createUser.name).to.eq(user.name);
+    expect(response.body.data.createUser.birthDate).to.eq(user.birthDate);
+    expect(response.body.data.createUser.email).to.eq(user.email);
   });
 });
 
@@ -72,55 +64,32 @@ describe("getUser query", function () {
   });
 
   it("should return inserted user", async () => {
-    const responseCreateUser = await request(
-      `http://localhost:${process.env.PORT}/graphql`
-    )
-      .post("/")
-      .set("Accept", "application/json")
-      .send({
-        query: createUserMutation,
-      })
-      .expect(200);
+    await getRepository(User).insert({
+      name: "Name Test",
+      email: "test@mail.com",
+      password: "123456teste",
+      birthDate: "06-05-1999",
+    });
+    const user = await getRepository(User).findOne({
+      email: "test@mail.com",
+    });
+    const userId = user.id;
 
-    expect(responseCreateUser.body.data.createUser.id).to.greaterThan(0);
-    expect(responseCreateUser.body.data.createUser.name).to.equal("Name Test");
-    expect(responseCreateUser.body.data.createUser.email).to.equal(
-      "test@mail.com"
-    );
-    expect(responseCreateUser.body.data.createUser.birthDate).to.equal(
-      "06-05-1999"
+    const response = await queryRequest(
+      `http://localhost:${process.env.PORT}/graphql`,
+      `query {
+        getUser(id: ${userId}) {
+          id
+          name
+          email
+          birthDate
+        }
+      }`
     );
 
-    const userId = responseCreateUser.body.data.createUser.id;
-
-    const responseGetUser = await request(
-      `http://localhost:${process.env.PORT}/graphql`
-    )
-      .post("/")
-      .set("Accept", "application/json")
-      .send({
-        query: `query {
-          getUser(id: ${userId}) {
-            id
-            name
-            email
-            birthDate
-          }
-        }`,
-      })
-      .expect(200);
-
-    expect(responseGetUser.body.data.getUser.id).to.equal(
-      responseCreateUser.body.data.createUser.id
-    );
-    expect(responseGetUser.body.data.getUser.name).to.equal(
-      responseCreateUser.body.data.createUser.name
-    );
-    expect(responseGetUser.body.data.getUser.email).to.equal(
-      responseCreateUser.body.data.createUser.email
-    );
-    expect(responseGetUser.body.data.getUser.birthDate).to.equal(
-      responseCreateUser.body.data.createUser.birthDate
-    );
+    expect(response.body.data.getUser.id).to.eq(user.id);
+    expect(response.body.data.getUser.name).to.eq(user.name);
+    expect(response.body.data.getUser.birthDate).to.eq(user.birthDate);
+    expect(response.body.data.getUser.email).to.eq(user.email);
   });
 });
