@@ -21,7 +21,23 @@ const resolvers = {
     },
   },
   Mutation: {
-    createUser: async (_: any, args: any) => {
+    createUser: async (_: any, args: any, context) => {
+      if (!context.token) {
+        throw new CustomError(
+          401,
+          "Token not found!",
+          "You don't have permission to access this"
+        );
+      }
+
+      if (!jwt.verify(context.token, "supersecret")) {
+        throw new CustomError(
+          401,
+          "Not authorized",
+          "You don't have permission to access this"
+        );
+      }
+
       const { name, email, password, birthDate } = args.data;
 
       const user = new User();
