@@ -64,11 +64,3 @@ export interface LoginInput {
 export interface GetUserInput {
   id: number;
 }
-
-export interface GetUserInput {
-  id: number;
-}
-
-export interface GetUserInput {
-  id: number;
-}
