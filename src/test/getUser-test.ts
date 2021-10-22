@@ -3,7 +3,7 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { queryRequest } from "./request-functions";
 
-export const getUserTest = describe("getUser query", function () {
+describe("getUser query", function () {
   afterEach(async () => {
     const db = getRepository(User);
     await db.clear();

@@ -13,7 +13,7 @@ const createUserMutation = `mutation CreateUserMutation($data: UserInput!) {
   }
 }`;
 
-export const createUserTest = describe("createUser mutation", function () {
+describe("createUser mutation", function () {
   let data: UserInput = {
     name: "Name Test",
     email: "test@mail.com",
