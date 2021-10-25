@@ -8,7 +8,7 @@
   "scripts": {
     "start": "nodemon --watch 'src/' --exec 'ts-node src/index.ts' -e ts",
     "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run",
-    "seed": "ts-node src/seed/users-seed.ts",
+    "seeds": "ts-node src/seed/users-seed.ts",
     "test": "mocha -r ts-node/register 'src/test/*.ts'"
   },
   "dependencies": {
