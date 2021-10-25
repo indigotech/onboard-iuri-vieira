@@ -4,17 +4,37 @@ import { CustomError } from "./error";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 
+const verifyToken = (token: string) => {
+  if (!token) {
+    throw new CustomError(
+      401,
+      "Token not found!",
+      "Token is required for this action"
+    );
+  }
+
+  if (!jwt.verify(token, "supersecret")) {
+    throw new CustomError(
+      401,
+      "Not authorized",
+      "You don't have permission to access this"
+    );
+  }
+};
+
 const resolvers = {
   Query: {
     hello: () => {
       return "Hello world!";
     },
-    getUser: async (parent, args, context, info) => {
-      const { id } = args;
+    user: async (parent, args, context, info) => {
+      verifyToken(context.token);
+
+      const { id } = args.data;
       const user = await getRepository(User).findOne({ id });
 
       if (!user) {
-        throw new CustomError(404, "User not found");
+        throw new CustomError(404, "User not found!");
       }
 
       return user;
@@ -22,21 +42,7 @@ const resolvers = {
   },
   Mutation: {
     createUser: async (_: any, args: any, context) => {
-      if (!context.token) {
-        throw new CustomError(
-          401,
-          "Token not found!",
-          "You don't have permission to access this"
-        );
-      }
-
-      if (!jwt.verify(context.token, "supersecret")) {
-        throw new CustomError(
-          401,
-          "Not authorized",
-          "You don't have permission to access this"
-        );
-      }
+      verifyToken(context.token);
 
       const { name, email, password, birthDate } = args.data;
 
