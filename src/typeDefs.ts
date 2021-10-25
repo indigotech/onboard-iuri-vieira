@@ -63,3 +63,7 @@ export interface GetUserInput {
 export interface GetUserInput {
   id: number;
 }
+
+export interface GetUserInput {
+  id: number;
+}
