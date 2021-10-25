@@ -16,7 +16,14 @@ const startServer = async () => {
       synchronize: true,
     });
 
-    const server = new ApolloServer({ typeDefs, resolvers, formatError });
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers,
+      context: ({ req }) => ({
+        token: req.headers.authorization,
+      }),
+      formatError,
+    });
     await server.start();
 
     const app = express();

@@ -3,6 +3,7 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { mutationRequest } from "./request-functions";
 import { UserInput } from "../typeDefs";
+import * as jwt from "jsonwebtoken";
 
 const createUserMutation = `mutation CreateUserMutation($data: UserInput!) {
   createUser(data: $data) {
@@ -29,7 +30,11 @@ describe("createUser mutation", function () {
   });
 
   it("should insert a user", async () => {
-    const response = await mutationRequest(createUserMutation, { data });
+    const token = jwt.sign({ username: data.email }, "supersecret", {
+      expiresIn: 3600,
+    });
+
+    const response = await mutationRequest(createUserMutation, { data }, token);
 
     const id = response.body.data.createUser.id;
     const user = await getRepository(User).findOne({ id });
@@ -54,7 +59,11 @@ describe("createUser mutation", function () {
       birthDate: "06-05-1999",
     });
 
-    const response = await mutationRequest(createUserMutation, { data });
+    const token = jwt.sign({ username: data.email }, "supersecret", {
+      expiresIn: 3600,
+    });
+
+    const response = await mutationRequest(createUserMutation, { data }, token);
 
     expect(response.body.errors[0].code).to.equal(409);
     expect(response.body.errors[0].message).to.equal(
@@ -70,9 +79,27 @@ describe("createUser mutation", function () {
       birthDate: "06-05-1999",
     };
 
-    const response = await mutationRequest(createUserMutation, { data });
+    const token = jwt.sign({ username: data.email }, "supersecret", {
+      expiresIn: 3600,
+    });
+
+    const response = await mutationRequest(createUserMutation, { data }, token);
 
     expect(response.body.errors[0].code).to.equal(400);
     expect(response.body.errors[0].message).to.equal("Invalid password!");
+  });
+
+  it("should return an invalid token error", async () => {
+    data = {
+      name: "Name Test",
+      email: "test@mail.com",
+      password: "123456teste",
+      birthDate: "06-05-1999",
+    };
+
+    const response = await mutationRequest(createUserMutation, { data }, "");
+
+    expect(response.body.errors[0].code).to.equal(401);
+    expect(response.body.errors[0].message).to.equal("Token not found!");
   });
 });
