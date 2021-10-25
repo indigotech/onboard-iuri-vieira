@@ -73,9 +73,26 @@ const resolvers = {
 
       const user = await getRepository(User).findOne({ email });
 
-      const response = { user: user, token: "the_token" };
+      if (!user) {
+        throw new CustomError(
+          400,
+          "Invalid email!",
+          "The email inserted is incorrect"
+        );
+      }
 
-      return response;
+      const validPassword = await bcrypt.compare(password, user.password);
+
+      if (validPassword) {
+        const response = { user: user, token: "the_token" };
+        return response;
+      } else {
+        throw new CustomError(
+          400,
+          "Invalid password!",
+          "The password inserted is incorrect"
+        );
+      }
     },
   },
 };
