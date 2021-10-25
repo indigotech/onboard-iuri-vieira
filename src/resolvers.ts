@@ -1,7 +1,8 @@
 import { User } from "./entity/User";
 import { getConnection, getRepository } from "typeorm";
 import { CustomError } from "./error";
-const bcrypt = require("bcrypt");
+import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 
 const resolvers = {
   Query: {
@@ -84,8 +85,10 @@ const resolvers = {
       const validPassword = await bcrypt.compare(password, user.password);
 
       if (validPassword) {
-        const response = { user: user, token: "the_token" };
-        return response;
+        const token = jwt.sign({ username: user.email }, "supersecret", {
+          expiresIn: 3600,
+        });
+        return { user, token };
       } else {
         throw new CustomError(
           400,
