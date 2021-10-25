@@ -5,7 +5,7 @@ export const mutationRequest = async (query, data, token) => {
     .post("/")
     .send({ query, variables: data })
     .set("Accept", "application/json")
-    .set("Authorization", token ? token : "");
+    .set("Authorization", token ?? "");
 
   return response;
 };
