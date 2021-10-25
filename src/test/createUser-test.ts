@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
-import { mutationRequest } from "./request-functions";
+import { authenticatedDataRequest } from "./request-functions";
 import { UserInput } from "../typeDefs";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
@@ -35,7 +35,11 @@ describe("createUser mutation", function () {
       expiresIn: 3600,
     });
 
-    const response = await mutationRequest(createUserMutation, { data }, token);
+    const response = await authenticatedDataRequest(
+      createUserMutation,
+      { data },
+      token
+    );
 
     const id = response.body.data.createUser.id;
     const user = await getRepository(User).findOne({ id });
@@ -67,7 +71,11 @@ describe("createUser mutation", function () {
       expiresIn: 3600,
     });
 
-    const response = await mutationRequest(createUserMutation, { data }, token);
+    const response = await authenticatedDataRequest(
+      createUserMutation,
+      { data },
+      token
+    );
 
     expect(response.body.errors[0].code).to.equal(409);
     expect(response.body.errors[0].message).to.equal(
@@ -87,7 +95,11 @@ describe("createUser mutation", function () {
       expiresIn: 3600,
     });
 
-    const response = await mutationRequest(createUserMutation, { data }, token);
+    const response = await authenticatedDataRequest(
+      createUserMutation,
+      { data },
+      token
+    );
 
     expect(response.body.errors[0].code).to.equal(400);
     expect(response.body.errors[0].message).to.equal("Invalid password!");
@@ -104,7 +116,11 @@ describe("createUser mutation", function () {
       birthDate: "06-05-1999",
     };
 
-    const response = await mutationRequest(createUserMutation, { data }, "");
+    const response = await authenticatedDataRequest(
+      createUserMutation,
+      { data },
+      ""
+    );
 
     expect(response.body.errors[0].code).to.equal(401);
     expect(response.body.errors[0].message).to.equal("Token not found!");

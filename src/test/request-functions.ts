@@ -25,7 +25,7 @@ export const queryRequest = async (query: string) => {
   return response;
 };
 
-export const loginRequest = async (query, data) => {
+export const loginRequest = async (query: string, data) => {
   const response = await request(`http://localhost:${process.env.PORT}/graphql`)
     .post("/")
     .send({ query, variables: data })
