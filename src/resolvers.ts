@@ -68,6 +68,15 @@ const resolvers = {
       await getConnection().manager.save(user);
       return user;
     },
+    login: async (_: any, args: any) => {
+      const { email, password } = args.data;
+
+      const user = await getRepository(User).findOne({ email });
+
+      const response = { user: user, token: "the_token" };
+
+      return response;
+    },
   },
 };
 
