@@ -70,7 +70,7 @@ const resolvers = {
       return user;
     },
     login: async (_: any, args: any) => {
-      const { email, password } = args.data;
+      const { email, password, rememberMe } = args.data;
 
       const user = await getRepository(User).findOne({ email });
 
@@ -85,8 +85,9 @@ const resolvers = {
       const validPassword = await bcrypt.compare(password, user.password);
 
       if (validPassword) {
+        const timeToExpire = rememberMe ? "7d" : 3600;
         const token = jwt.sign({ username: user.email }, "supersecret", {
-          expiresIn: 3600,
+          expiresIn: timeToExpire,
         });
         return { user, token };
       } else {
