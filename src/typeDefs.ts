@@ -1,9 +1,11 @@
+import internal = require("stream");
+
 const { gql } = require("apollo-server");
 
 export const typeDefs = gql`
   type Query {
     hello: String!
-    getUser(id: Int!): User
+    user(data: GetUserInput): User
   }
 
   type Mutation {
@@ -24,6 +26,10 @@ export const typeDefs = gql`
     rememberMe: Boolean
   }
 
+  input GetUserInput {
+    id: Int!
+  }
+
   type User {
     id: Int!
     name: String!
@@ -33,8 +39,8 @@ export const typeDefs = gql`
   }
 
   type Login {
-    user: User
-    token: String
+    user: User!
+    token: String!
   }
 `;
 
@@ -48,4 +54,8 @@ export interface UserInput {
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+export interface GetUserInput {
+  id: number;
 }
