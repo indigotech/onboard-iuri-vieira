@@ -88,8 +88,7 @@ const resolvers = {
         const token = jwt.sign({ username: user.email }, "supersecret", {
           expiresIn: 3600,
         });
-        const response = { user: user, token: token };
-        return response;
+        return { user, token };
       } else {
         throw new CustomError(
           400,
