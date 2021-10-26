@@ -24,3 +24,14 @@ export const queryRequest = async (query: string) => {
 
   return response;
 };
+
+export const loginRequest = async (query, data) => {
+  const response = await request(`http://localhost:${process.env.PORT}/graphql`)
+    .post("/")
+    .send({ query, variables: data })
+    .set("Accept", "application/json")
+    .set("Authorization", "")
+    .expect(200);
+
+  return response;
+};

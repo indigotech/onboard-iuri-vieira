@@ -4,6 +4,7 @@ import { User } from "../entity/User";
 import { mutationRequest } from "./request-functions";
 import { UserInput } from "../typeDefs";
 import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 
 const createUserMutation = `mutation CreateUserMutation($data: UserInput!) {
   createUser(data: $data) {
@@ -52,10 +53,13 @@ describe("createUser mutation", function () {
   });
 
   it("should return that the email is already in use error", async () => {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash("123456teste", salt);
+
     await getRepository(User).insert({
       name: "Name Test",
       email: "test@mail.com",
-      password: "123456teste",
+      password: hash,
       birthDate: "06-05-1999",
     });
 
@@ -90,10 +94,13 @@ describe("createUser mutation", function () {
   });
 
   it("should return an invalid token error", async () => {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash("123456teste", salt);
+
     data = {
       name: "Name Test",
       email: "test@mail.com",
-      password: "123456teste",
+      password: hash,
       birthDate: "06-05-1999",
     };
 

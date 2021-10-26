@@ -93,7 +93,7 @@ const resolvers = {
       if (!user) {
         throw new CustomError(
           400,
-          "Invalid email!",
+          "Incorrect email!",
           "The email inserted is incorrect"
         );
       }
@@ -109,7 +109,7 @@ const resolvers = {
       } else {
         throw new CustomError(
           400,
-          "Invalid password!",
+          "Incorrect password!",
           "The password inserted is incorrect"
         );
       }
