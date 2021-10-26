@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
-import { authenticatedDataRequest } from "./request-functions";
+import { authenticateRequest } from "./request-functions";
 import { UserInput } from "../typeDefs";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
@@ -35,7 +35,7 @@ describe("createUser mutation", function () {
       expiresIn: 3600,
     });
 
-    const response = await authenticatedDataRequest(
+    const response = await authenticateRequest(
       createUserMutation,
       { data },
       token
@@ -71,7 +71,7 @@ describe("createUser mutation", function () {
       expiresIn: 3600,
     });
 
-    const response = await authenticatedDataRequest(
+    const response = await authenticateRequest(
       createUserMutation,
       { data },
       token
@@ -95,7 +95,7 @@ describe("createUser mutation", function () {
       expiresIn: 3600,
     });
 
-    const response = await authenticatedDataRequest(
+    const response = await authenticateRequest(
       createUserMutation,
       { data },
       token
@@ -116,7 +116,7 @@ describe("createUser mutation", function () {
       birthDate: "06-05-1999",
     };
 
-    const response = await authenticatedDataRequest(
+    const response = await authenticateRequest(
       createUserMutation,
       { data },
       ""

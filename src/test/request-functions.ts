@@ -1,6 +1,6 @@
 import * as request from "supertest";
 
-export const mutationRequest = async (
+export const authenticateRequest = async (
   query: string,
   variables,
   token: string
