@@ -6,6 +6,7 @@ export const typeDefs = gql`
   type Query {
     hello: String!
     user(data: GetUserInput): User
+    users(data: GetUsersInput): User
   }
 
   type Mutation {
@@ -28,6 +29,10 @@ export const typeDefs = gql`
 
   input GetUserInput {
     id: Int!
+  }
+
+  input GetUsersInput {
+    qtd: Int!
   }
 
   type User {
