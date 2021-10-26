@@ -2,12 +2,12 @@ import * as request from "supertest";
 
 export const authenticateRequest = async (
   query: string,
-  variables,
+  data,
   token: string
 ) => {
   const response = await request(`http://localhost:${process.env.PORT}/graphql`)
     .post("/")
-    .send({ query, variables })
+    .send({ query, variables: data })
     .set("Accept", "application/json")
     .set("Authorization", token ?? "");
 
