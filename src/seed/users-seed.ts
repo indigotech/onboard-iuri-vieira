@@ -13,19 +13,18 @@ export const seedUser = async () => {
 
     const userRepository = getRepository(User);
     const salt = await bcrypt.genSalt(10);
-
+    let user = [];
     for (let index = 0; index < 50; index++) {
-      const user = new User();
-      user.name = faker.name.firstName();
-      user.birthDate = faker.date.past().toDateString();
-      user.email = faker.internet.email(user.name);
-      user.password = user.password = await bcrypt.hash(
+      user[index] = new User();
+      user[index].name = faker.name.firstName();
+      user[index].birthDate = faker.date.past().toDateString();
+      user[index].email = faker.internet.email(user[index].name);
+      user[index].password = await bcrypt.hash(
         faker.random.alphaNumeric(10),
         salt
       );
-
-      await userRepository.save(user);
     }
+    await userRepository.save(user);
   } catch (error) {
     console.log(error);
     throw new CustomError(400, "Error trying to execute function");
