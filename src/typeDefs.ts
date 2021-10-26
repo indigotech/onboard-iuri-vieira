@@ -6,7 +6,7 @@ export const typeDefs = gql`
   type Query {
     hello: String!
     user(data: GetUserInput): User
-    users(data: GetUsersInput): User
+    users(data: GetUsersInput): Users
   }
 
   type Mutation {
@@ -32,7 +32,8 @@ export const typeDefs = gql`
   }
 
   input GetUsersInput {
-    totalUsers: Int!
+    take: Int!
+    skip: Int!
   }
 
   type User {
@@ -41,6 +42,13 @@ export const typeDefs = gql`
     email: String!
     password: String!
     birthDate: String!
+  }
+
+  type Users {
+    users: [User]
+    totalUsers: Int!
+    prevPages: Int!
+    nextPages: Int!
   }
 
   type Login {
@@ -63,4 +71,9 @@ export interface LoginInput {
 
 export interface GetUserInput {
   id: number;
+}
+
+export interface GetUsersInput {
+  take: number;
+  skip: number;
 }
