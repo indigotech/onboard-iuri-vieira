@@ -4,7 +4,7 @@ import * as faker from "faker";
 import * as bcrypt from "bcrypt";
 import { CustomError } from "../error";
 
-export const seedUser = async (qtd: number) => {
+export const seedUser = async (totalUsers: number) => {
   try {
     const userRepository = getRepository(User);
     const salt = await bcrypt.genSalt(10);

@@ -40,9 +40,9 @@ const resolvers = {
       return user;
     },
     users: async (parent, args, context, info) => {
-      const { qtd } = args.data;
+      const { totalUsers } = args.data;
 
-      let rows = qtd > 0 ? qtd : 1;
+      let rows = totalUsers > 0 ? totalUsers : 1;
 
       const users = await getRepository(User)
         .createQueryBuilder()

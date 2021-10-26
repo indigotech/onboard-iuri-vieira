@@ -32,7 +32,7 @@ export const typeDefs = gql`
   }
 
   input GetUsersInput {
-    qtd: Int!
+    totalUsers: Int!
   }
 
   type User {
