@@ -40,21 +40,34 @@ const resolvers = {
       return user;
     },
     users: async (parent, args, context, info) => {
-      const { totalUsers } = args.data;
+      verifyToken(context.token);
 
-      let rows = totalUsers > 0 ? totalUsers : 1;
+      const { skip, take } = args.data;
+      const totalUsers = await getRepository(User).count();
+
+      if (take < 1 && skip < totalUsers) {
+        throw new CustomError(404, "The number of users required is invalid!");
+      }
+
+      if (skip > totalUsers) {
+        throw new CustomError(404, "Page not found!");
+      }
 
       const users = await getRepository(User)
         .createQueryBuilder()
         .orderBy("name")
-        .limit(rows)
+        .limit(take)
+        .offset(skip)
         .getMany();
 
       if (!users) {
         throw new CustomError(404, "User not found!");
       }
 
-      return users;
+      const prevPages = Math.floor(skip / take);
+      const nextPages = Math.floor((totalUsers - skip) / take - prevPages);
+
+      return { users, totalUsers, prevPages, nextPages };
     },
   },
   Mutation: {
