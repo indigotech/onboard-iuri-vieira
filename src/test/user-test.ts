@@ -38,11 +38,7 @@ describe("user query", function () {
       expiresIn: 3600,
     });
 
-    const id = insertedUser.id;
-
-    let data: GetUserInput = {
-      id,
-    };
+    let data: GetUserInput = { id: insertedUser.id };
 
     const response = await authenticatedDataRequest(userQuery, { data }, token);
 
