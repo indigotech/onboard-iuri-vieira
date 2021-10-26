@@ -33,6 +33,12 @@ describe("login mutation", function () {
   });
 
   beforeEach(async () => {
+    data = {
+      email: "test@mail.com",
+      password: "123456test",
+      rememberMe: false,
+    };
+
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(data.password, salt);
 
@@ -105,7 +111,6 @@ describe("login mutation", function () {
     const user = await getRepository(User).findOne({ email: "test@mail.com" });
 
     data.email = "test_error@mail.com";
-    data.password = "123456test";
 
     const response = await loginRequest(loginMutation, {
       data,
