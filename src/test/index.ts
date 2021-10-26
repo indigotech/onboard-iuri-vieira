@@ -8,4 +8,4 @@ before(async () => {
 
 require("./hello-query-test");
 require("./createUser-test");
-require("./getUser-test");
+require("./user-test");

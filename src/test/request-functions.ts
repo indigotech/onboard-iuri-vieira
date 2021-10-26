@@ -1,13 +1,13 @@
 import * as request from "supertest";
 
-export const mutationRequest = async (
+export const authenticateRequest = async (
   query: string,
-  variables,
+  data,
   token: string
 ) => {
   const response = await request(`http://localhost:${process.env.PORT}/graphql`)
     .post("/")
-    .send({ query, variables })
+    .send({ query, variables: data })
     .set("Accept", "application/json")
     .set("Authorization", token ?? "");
 
@@ -25,7 +25,7 @@ export const queryRequest = async (query: string) => {
   return response;
 };
 
-export const loginRequest = async (query, data) => {
+export const loginRequest = async (query: string, data) => {
   const response = await request(`http://localhost:${process.env.PORT}/graphql`)
     .post("/")
     .send({ query, variables: data })
