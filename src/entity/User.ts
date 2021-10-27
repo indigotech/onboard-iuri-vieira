@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
+import { address } from "faker";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+} from "typeorm";
+import { Address } from "./Address";
 
 @Entity()
 export class User {
@@ -17,4 +25,7 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Address, (address) => address.userId)
+  addresses: Address[];
 }
