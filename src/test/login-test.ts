@@ -27,7 +27,7 @@ let data: LoginInput = {
 describe("login mutation", function () {
   afterEach(async () => {
     const db = getRepository(User);
-    await db.clear();
+    await db.delete({});
     const clear = await db.count();
     expect(clear).to.equal(0);
   });
