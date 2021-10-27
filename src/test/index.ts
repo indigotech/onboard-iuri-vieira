@@ -9,3 +9,6 @@ before(async () => {
 require("./hello-query-test");
 require("./createUser-test");
 require("./user-test");
+require("./address-test");
+require("./login-test");
+require("./users-test");
