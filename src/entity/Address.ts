@@ -36,6 +36,6 @@ export class Address {
   @Column()
   state: string;
 
-  @Column()
+  @Column({ nullable: true })
   complement: string;
 }
