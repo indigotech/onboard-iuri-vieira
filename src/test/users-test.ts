@@ -28,12 +28,6 @@ describe("users query", function () {
     expect(clear).to.equal(0);
   });
 
-  beforeEach(async () => {
-    const token = jwt.sign({ username: "test@mail.com" }, "supersecret", {
-      expiresIn: 3600,
-    });
-  });
-
   it("should return 10 users, 1 prevPages and 1 nextPages", async () => {
     await seedUser(30);
 
