@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
-import { authenticatedDataRequest } from "./request-functions";
+import { authenticateRequest } from "./request-functions";
 import * as jwt from "jsonwebtoken";
 import { GetUsersInput } from "../typeDefs";
 import { seedUser } from "../seed/users-seed";
@@ -46,7 +46,7 @@ describe("users query", function () {
       skip: 10,
     };
 
-    const response = await authenticatedDataRequest(userQuery, { data }, token);
+    const response = await authenticateRequest(userQuery, { data }, token);
 
     expect(response.body.data.users.users).to.have.lengthOf(10);
     expect(response.body.data.users.prevPages).to.eq(1);
@@ -65,7 +65,7 @@ describe("users query", function () {
       skip: 10,
     };
 
-    const response = await authenticatedDataRequest(userQuery, { data }, token);
+    const response = await authenticateRequest(userQuery, { data }, token);
 
     expect(response.body.data.users.users).to.have.lengthOf(10);
     expect(response.body.data.users.prevPages).to.eq(1);
@@ -84,7 +84,7 @@ describe("users query", function () {
       skip: 0,
     };
 
-    const response = await authenticatedDataRequest(userQuery, { data }, token);
+    const response = await authenticateRequest(userQuery, { data }, token);
 
     expect(response.body.errors[0].code).to.equal(404);
     expect(response.body.errors[0].message).to.equal(
@@ -104,7 +104,7 @@ describe("users query", function () {
       skip: 10,
     };
 
-    const response = await authenticatedDataRequest(userQuery, { data }, token);
+    const response = await authenticateRequest(userQuery, { data }, token);
 
     expect(response.body.errors[0].code).to.equal(404);
     expect(response.body.errors[0].message).to.equal("Page not found!");
@@ -116,7 +116,7 @@ describe("users query", function () {
       skip: 0,
     };
 
-    const response = await authenticatedDataRequest(userQuery, { data }, "");
+    const response = await authenticateRequest(userQuery, { data }, "");
 
     expect(response.body.errors[0].code).to.equal(401);
     expect(response.body.errors[0].message).to.equal("Token not found!");
