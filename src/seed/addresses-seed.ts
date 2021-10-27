@@ -10,13 +10,13 @@ export const seedAddress = async (totalAddresses: number) => {
     let addresses = [];
     for (let index = 0; index < (totalAddresses ?? 50); index++) {
       addresses[index] = new Address();
-      addresses[index].cep = faker.address.zipCode.toString();
-      addresses[index].street = faker.address.streetName.toString();
-      addresses[index].streetNumber = faker.datatype.number.toString();
-      addresses[index].city = faker.address.cityName.toString();
+      addresses[index].cep = faker.address.zipCode();
+      addresses[index].street = faker.address.streetName();
+      addresses[index].streetNumber = faker.address.streetAddress();
+      addresses[index].city = faker.address.cityName();
       addresses[index].neighborhood = faker.lorem.words(1);
       addresses[index].complement = faker.lorem.words(3);
-      addresses[index].state = faker.address.stateAbbr.toString();
+      addresses[index].state = faker.address.stateAbbr();
     }
 
     await addressRepository.save(addresses);
