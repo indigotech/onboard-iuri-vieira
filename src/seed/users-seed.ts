@@ -3,14 +3,9 @@ import { User } from "../entity/User";
 import * as faker from "faker";
 import * as bcrypt from "bcrypt";
 import { CustomError } from "../error";
-import * as dotenv from "dotenv";
-import startServer from "../connect";
 
-export const seedUser = async () => {
+export const seedUser = async (totalUsers: number) => {
   try {
-    dotenv.config();
-    await startServer();
-
     const userRepository = getRepository(User);
     const salt = await bcrypt.genSalt(10);
     let users = [];
@@ -30,5 +25,3 @@ export const seedUser = async () => {
     throw new CustomError(400, "Error trying to execute function");
   }
 };
-
-seedUser();

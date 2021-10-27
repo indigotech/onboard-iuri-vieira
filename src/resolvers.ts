@@ -39,6 +39,23 @@ const resolvers = {
 
       return user;
     },
+    users: async (parent, args, context, info) => {
+      const { totalUsers } = args.data;
+
+      let rows = totalUsers > 0 ? totalUsers : 1;
+
+      const users = await getRepository(User)
+        .createQueryBuilder()
+        .orderBy("name")
+        .limit(rows)
+        .getMany();
+
+      if (!users) {
+        throw new CustomError(404, "User not found!");
+      }
+
+      return users;
+    },
   },
   Mutation: {
     createUser: async (_: any, args: any, context) => {
