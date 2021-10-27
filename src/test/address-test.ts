@@ -4,8 +4,6 @@ import { Address } from "../entity/Address";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import * as faker from "faker";
-import { seedAddress } from "../seed/addresses-seed";
-import { address } from "faker";
 
 describe("address entity", function () {
   afterEach(async () => {
@@ -13,6 +11,11 @@ describe("address entity", function () {
     await db.delete({});
     const clear = await db.count();
     expect(clear).to.equal(0);
+
+    const addressDb = getRepository(User);
+    await addressDb.delete({});
+    const clearAddress = await addressDb.count();
+    expect(clearAddress).to.equal(0);
   });
 
   it("should return the lenghtOf address entity", async () => {
