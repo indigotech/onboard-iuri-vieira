@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { Address } from "../entity/Address";
 import { authenticateRequest } from "./request-functions";
 import * as jwt from "jsonwebtoken";
 import { GetUsersInput } from "../typeDefs";
@@ -13,6 +14,15 @@ const userQuery = `query Query($data: GetUsersInput) {
       name
       email
       birthDate
+      addresses {
+        cep
+        street
+        streetNumber
+        state
+        city
+        neighborhood
+        complement
+      }
     }
     totalUsers
     prevPages
@@ -22,6 +32,11 @@ const userQuery = `query Query($data: GetUsersInput) {
 
 describe("users query", function () {
   afterEach(async () => {
+    const addressDb = getRepository(Address);
+    await addressDb.delete({});
+    const clearAddress = await addressDb.count();
+    expect(clearAddress).to.equal(0);
+
     const db = getRepository(User);
     await db.delete({});
     const clear = await db.count();
@@ -100,8 +115,7 @@ describe("users query", function () {
 
     const response = await authenticateRequest(userQuery, { data }, token);
 
-    expect(response.body.errors[0].code).to.equal(404);
-    expect(response.body.errors[0].message).to.equal("Page not found!");
+    expect(response.body.data.users).to.equal(null);
   });
 
   it("should return an token not found error", async () => {
