@@ -1,4 +1,3 @@
-import { address } from "faker";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -26,6 +25,9 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(() => Address, (address) => address.userId)
+  @OneToMany((type) => Address, (address: Address) => address.userId, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   addresses: Address[];
 }
