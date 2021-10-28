@@ -1,10 +1,12 @@
 import { expect } from "chai";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { Address } from "../entity/Address";
 import { authenticateRequest } from "./request-functions";
 import { UserInput } from "../typeDefs";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
+import * as faker from "faker";
 
 const createUserMutation = `mutation CreateUserMutation($data: UserInput!) {
   createUser(data: $data) {
@@ -12,18 +14,66 @@ const createUserMutation = `mutation CreateUserMutation($data: UserInput!) {
     name
     email
     birthDate
+    addresses {
+      cep
+      street
+      streetNumber
+      city
+      neighborhood
+      state
+      complement
+    }
   }
 }`;
 
+let address1 = {
+  cep: faker.address.zipCode(),
+  street: faker.address.streetName(),
+  streetNumber: faker.address.streetAddress(),
+  city: faker.address.cityName(),
+  neighborhood: faker.lorem.words(1),
+  complement: faker.lorem.words(3),
+  state: faker.address.stateAbbr(),
+};
+
+let address2 = {
+  cep: faker.address.zipCode(),
+  street: faker.address.streetName(),
+  streetNumber: faker.address.streetAddress(),
+  city: faker.address.cityName(),
+  neighborhood: faker.lorem.words(1),
+  complement: faker.lorem.words(3),
+  state: faker.address.stateAbbr(),
+};
+
+let data: UserInput = {
+  name: "Name Test",
+  email: "test@mail.com",
+  password: "123456teste",
+  birthDate: "06-05-1999",
+  addresses: [address1, address2],
+};
+
 describe("createUser mutation", function () {
-  let data: UserInput = {
-    name: "Name Test",
-    email: "test@mail.com",
-    password: "123456teste",
-    birthDate: "06-05-1999",
-  };
+  beforeEach(async () => {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash("123456teste", salt);
+
+    data = {
+      name: "Name Test",
+      email: "test@mail.com",
+      password: hash,
+      birthDate: "06-05-1999",
+      addresses: [address1, address2],
+    };
+  });
 
   afterEach(async () => {
+    const addressDb = getRepository(Address);
+    await addressDb.delete({});
+    const clearAddress = await addressDb.count();
+    expect(clearAddress).to.equal(0);
+
     const db = getRepository(User);
     await db.delete({});
     const clear = await db.count();
@@ -44,15 +94,12 @@ describe("createUser mutation", function () {
     const id = response.body.data.createUser.id;
     const user = await getRepository(User).findOne({ id });
 
-    expect(response.body.data.createUser.name).to.eq("Name Test");
-    expect(response.body.data.createUser.birthDate).to.eq("06-05-1999");
-    expect(response.body.data.createUser.email).to.eq("test@mail.com");
-
     expect(response.body.data.createUser).to.be.deep.eq({
       id: user.id,
       name: user.name,
       email: user.email,
       birthDate: user.birthDate,
+      addresses: [address1, address2],
     });
   });
 
@@ -106,16 +153,6 @@ describe("createUser mutation", function () {
   });
 
   it("should return an invalid token error", async () => {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash("123456teste", salt);
-
-    data = {
-      name: "Name Test",
-      email: "test@mail.com",
-      password: hash,
-      birthDate: "06-05-1999",
-    };
-
     const response = await authenticateRequest(
       createUserMutation,
       { data },
