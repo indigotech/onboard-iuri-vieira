@@ -46,11 +46,11 @@ const resolvers = {
       const totalUsers = await getRepository(User).count();
 
       if (take < 1 && skip < totalUsers) {
-        throw new CustomError(404, "The number of users required is invalid!");
-      }
-
-      if (skip > totalUsers) {
-        throw new CustomError(404, "Page not found!");
+        throw new CustomError(
+          404,
+          "The number of users required is invalid!",
+          "The take parameter has to be 1 or greater"
+        );
       }
 
       const users = await getRepository(User)
