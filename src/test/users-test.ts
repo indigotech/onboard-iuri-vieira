@@ -86,7 +86,7 @@ describe("users query", function () {
     );
   });
 
-  it("should return a page not found error", async () => {
+  it("should return a null object", async () => {
     await seedUser(5);
 
     const token = jwt.sign({ username: "test@mail.com" }, "supersecret", {
@@ -100,8 +100,7 @@ describe("users query", function () {
 
     const response = await authenticateRequest(userQuery, { data }, token);
 
-    expect(response.body.errors[0].code).to.equal(404);
-    expect(response.body.errors[0].message).to.equal("Page not found!");
+    expect(response.body.data.users).to.equal(null);
   });
 
   it("should return an token not found error", async () => {
