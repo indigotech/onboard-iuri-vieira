@@ -19,12 +19,23 @@ export const typeDefs = gql`
     email: String!
     password: String!
     birthDate: String!
+    addresses: [AddressInput]
   }
 
   input LoginInput {
     email: String!
     password: String!
     rememberMe: Boolean
+  }
+
+  input AddressInput {
+    cep: String!
+    street: String!
+    streetNumber: String!
+    state: String!
+    city: String!
+    neighborhood: String!
+    complement: String
   }
 
   input GetUserInput {
@@ -42,6 +53,7 @@ export const typeDefs = gql`
     email: String!
     password: String!
     birthDate: String!
+    addresses: [Address]
   }
 
   type Users {
@@ -55,18 +67,39 @@ export const typeDefs = gql`
     user: User!
     token: String!
   }
+
+  type Address {
+    cep: String!
+    street: String!
+    streetNumber: String!
+    state: String!
+    city: String!
+    neighborhood: String!
+    complement: String
+  }
 `;
 
+export interface AddressInput {
+  cep: string;
+  street: string;
+  streetNumber: string;
+  state: string;
+  city: string;
+  neighborhood: string;
+  complement: String;
+}
 export interface UserInput {
   name: string;
   email: string;
   password: string;
   birthDate: string;
+  addresses?: AddressInput[];
 }
 
 export interface LoginInput {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface GetUserInput {
