@@ -3,6 +3,7 @@ import { getConnection, getRepository } from "typeorm";
 import { CustomError } from "./error";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
+import { Address } from "./entity/Address";
 
 const verifyToken = (token: string) => {
   if (!token) {
@@ -31,7 +32,10 @@ const resolvers = {
       verifyToken(context.token);
 
       const { id } = args.data;
-      const user = await getRepository(User).findOne({ id });
+      const user = await getRepository(User).findOne(
+        { id },
+        { relations: ["addresses"] }
+      );
 
       if (!user) {
         throw new CustomError(404, "User not found!");
@@ -73,8 +77,7 @@ const resolvers = {
   Mutation: {
     createUser: async (_: any, args: any, context) => {
       verifyToken(context.token);
-
-      const { name, email, password, birthDate } = args.data;
+      const { name, email, password, birthDate, addresses } = args.data;
 
       const user = new User();
       user.name = name;
@@ -116,6 +119,10 @@ const resolvers = {
           "Invalid password!",
           "The password has to contain at least 7 chacaracters"
         );
+      }
+
+      if (addresses) {
+        user.addresses = addresses;
       }
 
       await getConnection().manager.save(user);
