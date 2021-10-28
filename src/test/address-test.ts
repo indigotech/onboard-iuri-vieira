@@ -12,7 +12,7 @@ describe("address entity", function () {
     const clear = await db.count();
     expect(clear).to.equal(0);
 
-    const addressDb = getRepository(User);
+    const addressDb = getRepository(Address);
     await addressDb.delete({});
     const clearAddress = await addressDb.count();
     expect(clearAddress).to.equal(0);
