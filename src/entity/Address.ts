@@ -12,10 +12,7 @@ export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.addresses, {
-    cascade: true,
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(() => User, (user: User) => user.addresses)
   userId: User;
 
   @Column()
