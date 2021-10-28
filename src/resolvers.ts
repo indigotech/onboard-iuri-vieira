@@ -45,24 +45,26 @@ const resolvers = {
     },
     users: async (parent, args, context, info) => {
       verifyToken(context.token);
-
       const { skip, take } = args.data;
+
       const totalUsers = await getRepository(User).count();
 
       if (take < 1 && skip < totalUsers) {
-        throw new CustomError(404, "The number of users required is invalid!");
+        throw new CustomError(
+          404,
+          "The number of users required is invalid!",
+          "The take parameter has to be 1 or greater"
+        );
       }
 
-      if (skip > totalUsers) {
-        throw new CustomError(404, "Page not found!");
-      }
-
-      const users = await getRepository(User)
-        .createQueryBuilder()
-        .orderBy("name")
-        .limit(take)
-        .offset(skip)
-        .getMany();
+      const users = await getRepository(User).find({
+        skip,
+        take,
+        relations: ["addresses"],
+        order: {
+          name: "ASC",
+        },
+      });
 
       if (!users) {
         throw new CustomError(404, "User not found!");
