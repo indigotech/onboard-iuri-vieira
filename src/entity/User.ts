@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+} from "typeorm";
+import { Address } from "./Address";
 
 @Entity()
 export class User {
@@ -17,4 +24,10 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany((type) => Address, (address: Address) => address.userId, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  addresses: Address[];
 }
